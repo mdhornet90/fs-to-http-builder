@@ -15,14 +15,18 @@ export default (
   } = {},
 ) => {
   const options = { httpMethods, exclusionPatterns };
-  // const test = getAllFilesFromRoot(rootPath).filter(
-  //   aPath =>
-  //     !mm.any(aPath, exclusionPatterns) && mm.isMatch(aPath, inclusionPattern),
-  // );
-  return findAllEndpointsDirectories(rootPath).reduce((acc, folder) => {
-    const potentialRoutes = discoverPotentialPathsToRoutes(folder, options);
-    return [...acc, ...extractValidRoutes(folder, potentialRoutes, options)];
-  }, []);
+  const endpointPaths = getAllFilesFromRoot(rootPath).filter(
+    aPath =>
+      !mm.any(aPath, exclusionPatterns) && mm.isMatch(aPath, inclusionPattern),
+  );
+  const endpointFileGroups = groupFilesByEndpointDirectories(endpointPaths);
+  return Object.keys(endpointFileGroups).reduce(
+    (acc, folder) => [
+      ...acc,
+      ...extractValidRoutes(folder, endpointFileGroups[folder], options),
+    ],
+    [],
+  );
 };
 
 function getAllFilesFromRoot(root) {
@@ -43,43 +47,25 @@ function getAllFilesFromRoot(root) {
   return paths;
 }
 
-function findAllEndpointsDirectories(root) {
-  const paths = [];
-  let remainingFiles = [root];
-  while (remainingFiles.length > 0) {
-    const current = remainingFiles.pop();
-    const { name } = path.parse(current);
-    const status = fs.statSync(current);
-    if (status.isDirectory()) {
-      if (name === 'endpoints') {
-        paths.push(current);
-      } else {
-        const subFiles = fs
-          .readdirSync(current)
-          .map(file => path.join(current, file));
-        remainingFiles = [...subFiles, ...remainingFiles];
+function groupFilesByEndpointDirectories(paths) {
+  const groups = paths.reduce((acc, aPath) => {
+    const components = aPath.split(path.sep);
+    const { length } = components;
+    let i = 0;
+    const endpointDirComponents = [];
+    while (i < length) {
+      endpointDirComponents.push(components[i]);
+      i += 1;
+      if (components[i - 1] === 'endpoints') {
+        break;
       }
     }
-  }
-  return paths;
-}
+    const endpointPath = endpointDirComponents.join(path.sep);
+    acc[endpointPath] = [...(acc[endpointPath] || []), aPath];
+    return acc;
+  }, {});
 
-function discoverPotentialPathsToRoutes(root, { exclusionPatterns }) {
-  const paths = [];
-  let remainingFiles = [root];
-  while (remainingFiles.length > 0) {
-    const current = remainingFiles.pop();
-    const status = fs.statSync(current);
-    if (status.isDirectory()) {
-      const subFiles = fs
-        .readdirSync(current)
-        .map(file => path.join(current, file));
-      remainingFiles = [...subFiles, ...remainingFiles];
-    } else if (!mm.any(current, exclusionPatterns)) {
-      paths.push(current);
-    }
-  }
-  return paths;
+  return groups;
 }
 
 function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
