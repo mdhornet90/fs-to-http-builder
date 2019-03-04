@@ -1,0 +1,28 @@
+{
+  "name": "route-builder",
+  "version": "1.0.0",
+  "description": "A utility that can generate express routes from your project's filesystem",
+  "main": "dist/index.js",
+  "repository": "https://gitlab.com/mdhornet90/route-builder",
+  "author": "Chris Murphy",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "babel -d dist src"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.1.6",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "prettier": "^1.15.2"
+  },
+  "dependencies": {
+    "micromatch": "^3.1.10"
+  }
+}
