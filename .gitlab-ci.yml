@@ -1,5 +1,4 @@
-before_script:
- - docker info
+image: node:lts-alpine
 
 stages:
   - build
