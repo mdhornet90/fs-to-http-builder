@@ -14,8 +14,8 @@
   },
   "scripts": {
     "build": "babel -d dist src --ignore '**/*.test.js'",
-    "test": "jest src",
-    "coverage": "jest --coverage src"
+    "test": "jest -i src",
+    "coverage": "jest -i --coverage src"
   },
   "dependencies": {
     "micromatch": "^3.1.10"
