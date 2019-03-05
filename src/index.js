@@ -50,13 +50,10 @@ function getAllFilesFromRoot(root) {
 function groupFilesByEndpointDirectories(paths) {
   const groups = paths.reduce((acc, aPath) => {
     const components = aPath.split('/');
-    const { length } = components;
-    let i = 0;
     const endpointDirComponents = [];
-    while (i < length) {
+    for (let i = 0; i < components.length; i += 1) {
       endpointDirComponents.push(components[i]);
-      i += 1;
-      if (components[i - 1] === 'endpoints') {
+      if (components[i] === 'endpoints') {
         break;
       }
     }
@@ -99,7 +96,7 @@ function extractRoute(root, pathToRoute) {
     .split('/')
     .map(elem => (elem.startsWith('_') ? `:${elem.slice(1)}` : elem))
     .join('/');
-  const { dir, name } = path.parse(sanitizedPath);
+  const { name, dir } = path.parse(sanitizedPath);
   return { name, route: dir };
 }
 
