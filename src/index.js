@@ -41,7 +41,7 @@ function getAllFilesFromRoot(root) {
         .map(file => path.join(current, file));
       remainingFiles = [...subFiles, ...remainingFiles];
     } else {
-      paths.push(current);
+      paths.push(current.split(path.sep).join('/'));
     }
   }
   return paths;
@@ -49,7 +49,7 @@ function getAllFilesFromRoot(root) {
 
 function groupFilesByEndpointDirectories(paths) {
   const groups = paths.reduce((acc, aPath) => {
-    const components = aPath.split(path.sep);
+    const components = aPath.split('/');
     const { length } = components;
     let i = 0;
     const endpointDirComponents = [];
@@ -60,7 +60,7 @@ function groupFilesByEndpointDirectories(paths) {
         break;
       }
     }
-    const endpointPath = endpointDirComponents.join(path.sep);
+    const endpointPath = endpointDirComponents.join('/');
     acc[endpointPath] = [...(acc[endpointPath] || []), aPath];
     return acc;
   }, {});
@@ -96,19 +96,17 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
 function extractRoute(root, pathToRoute) {
   const sanitizedPath = path
     .relative(root, pathToRoute)
-    .split(path.sep)
+    .split('/')
     .map(elem => (elem.startsWith('_') ? `:${elem.slice(1)}` : elem))
-    .join(path.sep);
+    .join('/');
   const { dir, name } = path.parse(sanitizedPath);
-  const route = dir.split(path.sep).join('/');
-  return { name, route };
+  return { name, route: dir };
 }
 
 function buildEndpointRoute(route, name) {
-  const routeElements = [route];
+  const routeElements = route ? [route] : [];
   if (name !== 'index') {
     routeElements.push(name);
   }
-
-  return `/${route ? routeElements.join('/') : name}`;
+  return `/${routeElements.join('/')}`;
 }
