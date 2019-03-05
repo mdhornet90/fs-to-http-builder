@@ -7,8 +7,18 @@
   "author": "Chris Murphy",
   "license": "MIT",
   "private": false,
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "unit-testing"
+    ]
+  },
   "scripts": {
-    "build": "babel -d dist src"
+    "build": "babel -d dist src --ignore '**/*.test.js'",
+    "test": "jest src",
+    "coverage": "jest --coverage src"
+  },
+  "dependencies": {
+    "micromatch": "^3.1.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
@@ -20,9 +30,8 @@
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-prettier": "^3.0.0",
+    "jest": "^24.1.0",
+    "fsify": "^3.0.0",
     "prettier": "^1.15.2"
-  },
-  "dependencies": {
-    "micromatch": "^3.1.10"
   }
 }

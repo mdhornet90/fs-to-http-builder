@@ -8,7 +8,6 @@
   ],
   "env": {
     "debug": {
-      "sourceMaps": true,
       "retainLines": true
     }
   }
