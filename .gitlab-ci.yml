@@ -1,0 +1,44 @@
+before_script:
+ - docker info
+
+stages:
+  - build
+  - lint
+  - test
+  - package
+  - publish
+
+build:
+  stage: build
+  only:
+    - branches
+  script:
+    - yarn install
+
+lint:
+  stage: lint
+  only:
+    - branches
+  script:
+    - yarn lint
+
+test:
+  stage: test
+  only:
+    - branches
+  script:
+    - yarn test
+
+package:
+  stage: package
+  only:
+    - branches
+  script:
+    - yarn build
+
+publish:
+  stage: publish
+  only:
+    - master
+  script:
+    - yarn install

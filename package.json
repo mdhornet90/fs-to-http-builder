@@ -13,6 +13,7 @@
     ]
   },
   "scripts": {
+    "lint": "eslint src",
     "build": "babel -d dist src --ignore '**/*.test.js'",
     "test": "jest -i src",
     "coverage": "jest -i --coverage src"
