@@ -1,18 +1,18 @@
 image: node:lts-alpine
 
 stages:
-  - build
   - lint
   - test
   - package
   - publish
 
-build:
-  stage: build
-  only:
-    - branches
-  script:
-    - yarn install
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+
+before_script:
+  - yarn install
 
 lint:
   stage: lint
@@ -40,4 +40,4 @@ publish:
   only:
     - master
   script:
-    - yarn install
+    - echo "placeholder"
