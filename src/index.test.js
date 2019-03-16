@@ -103,7 +103,7 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar': {
-            [`something.js`]: 'module.exports = { get: () => {}, foo: () => {} }',
+            'something.js': 'module.exports = { get: () => {}, foo: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
           },
         }),
@@ -116,7 +116,7 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar': {
-            [`baz.js`]: 'module.exports = { get: () => {}, post: () => {} }',
+            'baz.js': 'module.exports = { get: () => {}, post: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
           },
         }),
@@ -139,7 +139,7 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar/baz': {
-            [`index.js`]: 'module.exports = { get: () => {}, post: () => {} }',
+            'index.js': 'module.exports = { get: () => {}, post: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
           },
         }),
@@ -162,7 +162,7 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/users/_id/stuff': {
-            [`index.js`]: 'module.exports = { get: () => {}, post: () => {} }',
+            'index.js': 'module.exports = { get: () => {}, post: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
           },
         }),

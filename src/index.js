@@ -1,24 +1,30 @@
 import fs from 'fs';
 import path from 'path';
 
+import Debug from 'debug';
 import mm from 'micromatch';
+
+const debug = Debug('fs-to-http-builder');
 
 export default (
   rootPath,
   {
     httpMethods = ['post', 'get', 'put', 'patch', 'delete'],
-    exclusionPatterns = [
+    fileExclusionPatterns = [
       '**/__tests__/**/*.[jt]s?(x)',
       '**/?(*.)+(spec|test).[jt]s?(x)',
     ],
-    inclusionPattern = '**/endpoints/**/*[jt]s?(x)',
+    fileInclusionPattern = '**/endpoints/**/*[jt]s?(x)',
   } = {},
 ) => {
-  const options = { httpMethods, exclusionPatterns };
-  const endpointPaths = getAllFilesFromRoot(rootPath).filter(
-    aPath =>
-      !mm.any(aPath, exclusionPatterns) && mm.isMatch(aPath, inclusionPattern),
-  );
+  const options = { httpMethods, exclusionPatterns: fileExclusionPatterns };
+  const endpointPaths = getAllFilesFromRoot(rootPath).filter(aPath => {
+    const result =
+      !mm.any(aPath, fileExclusionPatterns) &&
+      mm.isMatch(aPath, fileInclusionPattern);
+    debug(`Is path ${aPath} a match for an endpoint? ${result ? 'Yes' : 'No'}`);
+    return result;
+  });
   const endpointFileGroups = groupFilesByEndpointDirectories(endpointPaths);
   return Object.keys(endpointFileGroups).reduce(
     (acc, folder) => [
@@ -34,6 +40,7 @@ function getAllFilesFromRoot(root) {
   let remainingFiles = [root];
   while (remainingFiles.length > 0) {
     const current = remainingFiles.pop();
+    debug(`Found file: ${current}`);
     const status = fs.statSync(current);
     if (status.isDirectory()) {
       const subFiles = fs
@@ -72,18 +79,24 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
     const { name, route } = extractRoute(root, pathToRoute);
     const moduleExports = Object.keys(loadedModule);
     if (httpMethods.includes(name)) {
+      debug(`Adding route with the name of http method ${name}: ${route}`);
       acc.push({
         method: name,
         route: `/${route}`,
         handlingFunction: loadedModule.default,
       });
     } else if (moduleExports.every(e => httpMethods.includes(e))) {
+      debug(`Extracting http methods from file ${name}`);
       acc.push(
-        ...moduleExports.map(exportName => ({
-          method: exportName,
-          route: buildEndpointRoute(route, name),
-          handlingFunction: loadedModule[exportName],
-        })),
+        ...moduleExports.map(exportName => {
+          const finalizedRoute = buildEndpointRoute(route, name);
+          debug(`- Adding route with the name of http method ${name}`);
+          return {
+            method: exportName,
+            route: finalizedRoute,
+            handlingFunction: loadedModule[exportName],
+          };
+        }),
       );
     }
     return acc;
@@ -104,6 +117,12 @@ function buildEndpointRoute(route, name) {
   const routeElements = route ? [route] : [];
   if (name !== 'index') {
     routeElements.push(name);
+  } else {
+    debug(
+      `Found index file, using name of enclosing folder (${
+        routeElements[routeElements.length - 1]
+      })`,
+    );
   }
   return `/${routeElements.join('/')}`;
 }
