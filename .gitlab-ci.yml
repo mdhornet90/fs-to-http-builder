@@ -33,7 +33,7 @@ mutation-test:
   only:
     - branches
   script:
-    - bash ./scripts/mutation_test.sh 90
+    - /bin/bash ./scripts/mutation_test.sh 90
 
 package:
   stage: package
