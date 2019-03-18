@@ -1,4 +1,4 @@
-image: node:lts-alpine
+image: node:lts
 
 stages:
   - lint
@@ -33,7 +33,7 @@ mutation-test:
   only:
     - branches
   script:
-    - /bin/bash ./scripts/mutation_test.sh 90
+    - bash ./scripts/mutation_test.sh 90
 
 package:
   stage: package
