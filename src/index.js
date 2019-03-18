@@ -20,8 +20,8 @@ export default (
   const options = { httpMethods, exclusionPatterns: fileExclusionPatterns };
   const endpointPaths = getAllFilesFromRoot(rootPath).filter(aPath => {
     const result =
-      !mm.any(aPath, fileExclusionPatterns) &&
-      mm.isMatch(aPath, fileInclusionPattern);
+      !mm.any(aPath, fileExclusionPatterns, { dot: true }) &&
+      mm.isMatch(aPath, fileInclusionPattern, { dot: true });
     debug(`Is path ${aPath} a match for an endpoint? ${result ? 'Yes' : 'No'}`);
     return result;
   });

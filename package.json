@@ -16,7 +16,8 @@
     "lint": "eslint src",
     "build": "babel -d dist src --ignore '**/*.test.js'",
     "test": "jest -i src",
-    "coverage": "jest -i --coverage src"
+    "coverage": "jest -i --coverage src",
+    "mutation-test": "stryker run"
   },
   "dependencies": {
     "debug": "^4.1.1",
@@ -27,6 +28,10 @@
     "@babel/core": "^7.1.6",
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.6",
+    "@stryker-mutator/core": "^1.1.0",
+    "@stryker-mutator/html-reporter": "^1.1.0",
+    "@stryker-mutator/javascript-mutator": "^1.1.0",
+    "@stryker-mutator/jest-runner": "^1.1.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
@@ -34,6 +39,7 @@
     "eslint-plugin-prettier": "^3.0.0",
     "fsify": "^3.0.0",
     "jest": "^24.1.0",
-    "prettier": "^1.15.2"
+    "prettier": "^1.15.2",
+    "stryker-babel-transpiler": "^0.10.1"
   }
 }

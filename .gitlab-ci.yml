@@ -28,6 +28,13 @@ test:
   script:
     - yarn test
 
+mutation-test:
+  stage: test
+  only:
+    - branches
+  script:
+    - bash ./scripts/mutation_test.sh 90
+
 package:
   stage: package
   only:

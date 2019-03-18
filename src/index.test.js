@@ -53,7 +53,8 @@ describe('Route Builder Tests', () => {
     test('The builder by default will skip test folders', async () => {
       await fsify(
         translateDirectoryStructure({
-          'someFolder/__tests__/this/endpoints/folder/will/be': 'skipped',
+          'someFolder/__tests__/this/endpoints/folder/will/be/skipped.js':
+            'module.exports = { get: () => {}, post: () => {} }',
         }),
       );
       expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
