@@ -85,18 +85,26 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
         route: `/${route}`,
         handlingFunction: loadedModule.default,
       });
-    } else if (moduleExports.every(e => httpMethods.includes(e))) {
+    } else if (moduleExports.some(e => httpMethods.includes(e))) {
       debug(`Extracting http methods from file ${name}`);
       acc.push(
-        ...moduleExports.map(exportName => {
-          const finalizedRoute = buildEndpointRoute(route, name);
-          debug(`- Adding route with the name of http method ${name}`);
-          return {
-            method: exportName,
-            route: finalizedRoute,
-            handlingFunction: loadedModule[exportName],
-          };
-        }),
+        ...moduleExports
+          .filter(exportName => {
+            const result = httpMethods.includes(exportName);
+            if (!result) {
+              debug(`  Skipping non-HTTP-method export ${exportName}`);
+            }
+            return result;
+          })
+          .map(exportName => {
+            const finalizedRoute = buildEndpointRoute(route, name);
+            debug(`  Adding route with the name of http method ${name}`);
+            return {
+              method: exportName,
+              route: finalizedRoute,
+              handlingFunction: loadedModule[exportName],
+            };
+          }),
       );
     }
     return acc;

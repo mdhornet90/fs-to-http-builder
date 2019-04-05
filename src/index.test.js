@@ -100,25 +100,15 @@ describe('Route Builder Tests', () => {
       });
     });
 
-    test('The builder by default will not generate routes for any files that contain exports other than http methods', async () => {
+    test('The builder will generate routes from files that contain http methods as exports', async () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar': {
-            'something.js': 'module.exports = { get: () => {}, foo: () => {} }',
+            'baz.js':
+              'module.exports = { get: () => {}, post: () => {}, blah: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
-          },
-        }),
-      );
-
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
-    });
-
-    test('The builder will by default generate routes for any files that contain only http methods as exports', async () => {
-      await fsify(
-        translateDirectoryStructure({
-          'someFolder/api/endpoints/foo/bar': {
-            'baz.js': 'module.exports = { get: () => {}, post: () => {} }',
-            'thiswontmatch.js': 'module.exports = { default: () => {} }',
+            'anothernonmatch.js':
+              'module.exports = { blah: () => {}, foo: () => {} }',
           },
         }),
       );
