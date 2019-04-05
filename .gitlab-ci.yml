@@ -1,4 +1,4 @@
-image: node:lts
+image: node:lts-alpine
 
 stages:
   - lint
