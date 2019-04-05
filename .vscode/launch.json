@@ -6,11 +6,14 @@
     "configurations": [{
         "type": "node",
         "request": "launch",
-        "name": "Run Current API Test File",
+        "name": "Run Current Test File",
         "cwd": "${workspaceFolder}",
         "program": "${workspaceFolder}/node_modules/.bin/jest",
         "args": ["${file}"],
-        "console": "integratedTerminal"
+        "console": "integratedTerminal",
+        "env": {
+            "BABEL_ENV": "debug",
+        }
     },
     ]
 }

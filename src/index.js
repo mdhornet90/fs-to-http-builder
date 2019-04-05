@@ -40,7 +40,6 @@ function getAllFilesFromRoot(root) {
   let remainingFiles = [root];
   while (remainingFiles.length > 0) {
     const current = remainingFiles.pop();
-    debug(`Found file: ${current}`);
     const status = fs.statSync(current);
     if (status.isDirectory()) {
       const subFiles = fs
@@ -48,6 +47,7 @@ function getAllFilesFromRoot(root) {
         .map(file => path.join(current, file));
       remainingFiles = [...subFiles, ...remainingFiles];
     } else {
+      debug(`Found file: ${current}`);
       paths.push(current.split(path.sep).join('/'));
     }
   }

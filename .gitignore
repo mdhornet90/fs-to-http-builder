@@ -82,3 +82,5 @@ dist/*
 reports/*
 
 .stryker-tmp
+
+unit-testing
