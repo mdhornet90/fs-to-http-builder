@@ -33,7 +33,7 @@ mutation-test:
   only:
     - branches
   script:
-    - bash ./scripts/mutation_test.sh 90
+    - yarn mutation-test
 
 package:
   stage: package

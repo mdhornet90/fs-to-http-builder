@@ -4,5 +4,6 @@ module.exports = config => {
     reporters: ['progress', 'html', 'clear-text'],
     testRunner: 'jest',
     coverageAnalysis: 'off',
+    thresholds: { break: 90 },
   });
 };

@@ -80,3 +80,5 @@ typings/
 
 dist/*
 reports/*
+
+.stryker-tmp
