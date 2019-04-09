@@ -15,6 +15,7 @@
     "coverage": "jest -i --coverage src",
     "mutation-test": "stryker run"
   },
+  "files": ["/index.js", "/dist"],
   "dependencies": {
     "debug": "^4.1.1",
     "micromatch": "^3.1.10"
