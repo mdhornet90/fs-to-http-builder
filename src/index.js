@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 
 import Debug from 'debug';
@@ -6,7 +6,7 @@ import mm from 'micromatch';
 
 const debug = Debug('fs-to-http-builder');
 
-export default async (
+export default (
   rootPath,
   {
     httpMethods = ['post', 'get', 'put', 'patch', 'delete'],
@@ -17,8 +17,7 @@ export default async (
     fileInclusionPattern = '**/endpoints/**/*[jt]s?(x)',
   } = {},
 ) => {
-  const filesFromRoot = await getAllFilesFromRoot(rootPath);
-  const endpointPaths = filesFromRoot.filter(aPath => {
+  const endpointPaths = getAllFilesFromRoot(rootPath).filter(aPath => {
     const result =
       !mm.any(aPath, fileExclusionPatterns, { dot: true }) &&
       mm.isMatch(aPath, fileInclusionPattern, { dot: true });
@@ -37,17 +36,16 @@ export default async (
   );
 };
 
-async function getAllFilesFromRoot(root) {
+function getAllFilesFromRoot(root) {
   const paths = [];
   let remainingFiles = [root];
   while (remainingFiles.length > 0) {
     const current = remainingFiles.pop();
-    // eslint-disable-next-line no-await-in-loop
-    const status = await fs.stat(current);
+    const status = fs.statSync(current);
     if (status.isDirectory()) {
-      // eslint-disable-next-line no-await-in-loop
-      const directoryContents = await fs.readdir(current);
-      const subFiles = directoryContents.map(file => path.join(current, file));
+      const subFiles = fs
+        .readdirSync(current)
+        .map(file => path.join(current, file));
       remainingFiles = [...subFiles, ...remainingFiles];
     } else {
       debug(`Found file: ${current}`);
