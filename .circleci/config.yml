@@ -6,12 +6,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
-        paths:
-          - node_modules
+          key: dependencies-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
 
   lint:
     docker:
@@ -19,7 +19,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-{{ checksum "yarn.lock" }}
       - run: yarn lint
   test:
     docker:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-{{ checksum "yarn.lock" }}
       - run: yarn test
   mutation-test:
     docker:
@@ -35,7 +35,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-{{ checksum "yarn.lock" }}
       - run: yarn mutation-test
   publish:
     docker:
@@ -43,7 +43,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-{{ checksum "yarn.lock" }}
       - run: yarn build
       - run: echo "placeholder"
 workflows:
@@ -52,20 +52,20 @@ workflows:
     jobs:
       - build
       - lint:
-        requires:
-          - build
+          requires:
+            - build
       - test:
-        requires: 
-          - build
+          requires: 
+            - build
       - mutation-test:
-        requires: 
-          - build
+          requires: 
+            - build
       - publish:
-        requires:
-          - build
-          - lint
-          - test
-          - mutation-test
-        filters:
-          branches:
-            only: master
+          requires:
+            - build
+            - lint
+            - test
+            - mutation-test
+          filters:
+            branches:
+              only: master
