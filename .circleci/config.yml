@@ -14,10 +14,13 @@ jobs:
           - node_modules
 
   lint:
-    - checkout
-    - restore_cache:
-      key: dependencies-{{ checksum "yarn.lock" }}
-    - run: yarn lint
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - restore_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn lint
   test:
     docker:
       - image: node:lts
