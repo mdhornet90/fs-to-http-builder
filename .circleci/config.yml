@@ -1,0 +1,68 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - restore_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+        paths:
+          - node_modules
+
+  lint:
+    - checkout
+    - restore_cache:
+      key: dependencies-{{ checksum "yarn.lock" }}
+    - run: yarn lint
+  test:
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - restore_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn test
+  mutation-test:
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - restore_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn mutation-test
+  publish:
+    docker:
+      - image: node:lts
+    steps:
+      - checkout
+      - restore_cache:
+        key: dependencies-{{ checksum "yarn.lock" }}
+      - run: yarn build
+      - run: echo "placeholder"
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - build
+      - lint:
+        requires:
+          - build
+      - test:
+        requires: 
+          - build
+      - mutation-test:
+        requires: 
+          - build
+      - publish:
+        requires:
+          - build
+          - lint
+          - test
+          - mutation-test
+        filters:
+          branches:
+            only: master
