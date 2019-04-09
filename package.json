@@ -2,7 +2,7 @@
   "name": "fs-to-http-builder",
   "version": "1.0.0",
   "description": "A utility that can generate express routes from your project's filesystem",
-  "main": "dist/index.js",
+  "main": "index.js",
   "repository": "https://github.com/mdhornet90/fs-to-http-builder.git",
   "author": "Chris Murphy",
   "license": "MIT",
