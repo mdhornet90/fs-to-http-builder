@@ -1,17 +1,13 @@
 {
-  "name": "route-builder",
+  "name": "fs-to-http-builder",
   "version": "1.0.0",
   "description": "A utility that can generate express routes from your project's filesystem",
   "main": "dist/index.js",
-  "repository": "https://gitlab.com/mdhornet90/route-builder",
+  "repository": "https://github.com/mdhornet90/fs-to-http-builder.git",
   "author": "Chris Murphy",
   "license": "MIT",
   "private": false,
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "unit-testing"
-    ]
-  },
+  "jest": { "coveragePathIgnorePatterns": ["unit-testing"] },
   "scripts": {
     "lint": "eslint src",
     "build": "babel -d dist src --ignore '**/*.test.js'",

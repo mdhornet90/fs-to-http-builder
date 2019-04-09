@@ -17,7 +17,6 @@ export default async (
     fileInclusionPattern = '**/endpoints/**/*[jt]s?(x)',
   } = {},
 ) => {
-  const options = { httpMethods, exclusionPatterns: fileExclusionPatterns };
   const filesFromRoot = await getAllFilesFromRoot(rootPath);
   const endpointPaths = filesFromRoot.filter(aPath => {
     const result =
@@ -30,7 +29,9 @@ export default async (
   return Object.keys(endpointFileGroups).reduce(
     (acc, folder) => [
       ...acc,
-      ...extractValidRoutes(folder, endpointFileGroups[folder], options),
+      ...extractValidRoutes(folder, endpointFileGroups[folder], {
+        httpMethods,
+      }),
     ],
     [],
   );
@@ -85,7 +86,7 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
       acc.push({
         method: name,
         route: `/${route}`,
-        handlingFunction: loadedModule.default,
+        handler: loadedModule.default,
       });
     } else if (moduleExports.some(e => httpMethods.includes(e))) {
       debug(`Extracting http methods from file ${name}`);
@@ -104,7 +105,7 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
             return {
               method: exportName,
               route: finalizedRoute,
-              handlingFunction: loadedModule[exportName],
+              handler: loadedModule[exportName],
             };
           }),
       );

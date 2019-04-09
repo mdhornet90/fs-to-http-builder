@@ -90,12 +90,12 @@ describe('Route Builder Tests', () => {
         expect(routes).toContainEqual({
           method,
           route: '/foo/bar',
-          handlingFunction: expect.any(Function),
+          handler: expect.any(Function),
         });
         expect(routes).toContainEqual({
           method: 'get',
           route: '/users',
-          handlingFunction: expect.any(Function),
+          handler: expect.any(Function),
         });
       });
     });
@@ -117,12 +117,12 @@ describe('Route Builder Tests', () => {
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
       expect(routes).toContainEqual({
         method: 'post',
         route: '/foo/bar/baz',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
     });
 
@@ -140,12 +140,12 @@ describe('Route Builder Tests', () => {
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
       expect(routes).toContainEqual({
         method: 'post',
         route: '/foo/bar/baz',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
     });
 
@@ -163,12 +163,12 @@ describe('Route Builder Tests', () => {
       expect(routes).toContainEqual({
         method: 'get',
         route: '/users/:id/stuff',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
       expect(routes).toContainEqual({
         method: 'post',
         route: '/users/:id/stuff',
-        handlingFunction: expect.any(Function),
+        handler: expect.any(Function),
       });
     });
   });
