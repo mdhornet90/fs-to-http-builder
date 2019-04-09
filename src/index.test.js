@@ -1,6 +1,6 @@
 import Fsify from 'fsify';
 
-import routeBuilder from '.';
+import fsToHttpBuilder from '.';
 
 const TESTING_DIRECTORY = `${process.cwd()}/unit-testing`;
 const harnessFsify = Fsify({ persistent: false, force: true });
@@ -35,19 +35,19 @@ describe('Route Builder Tests', () => {
   describe('Endpoint Discovery Tests', () => {
     test('The builder will not generate routes from empty directories', async () => {
       await fsify(translateDirectoryStructure({}));
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder will not generate routes from directories that do not contain an "endpoints" folder', async () => {
       await fsify(
         translateDirectoryStructure({ 'someFolder/thisFile': 'isUseless' }),
       );
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder will not generate routes from an empty "endpoints" directory', async () => {
       await fsify(translateDirectoryStructure({ 'someFolder/endpoints': {} }));
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder by default will skip test folders', async () => {
@@ -57,7 +57,7 @@ describe('Route Builder Tests', () => {
             'module.exports = { get: () => {}, post: () => {} }',
         }),
       );
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder by default will skip test files', async () => {
@@ -68,7 +68,7 @@ describe('Route Builder Tests', () => {
           },
         }),
       );
-      expect(routeBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
   });
   describe('Route Extraction Tests', () => {
@@ -86,7 +86,7 @@ describe('Route Builder Tests', () => {
           }),
         );
 
-        const routes = routeBuilder(TESTING_DIRECTORY);
+        const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
         expect(routes).toContainEqual({
           method,
           route: '/foo/bar',
@@ -113,7 +113,7 @@ describe('Route Builder Tests', () => {
         }),
       );
 
-      const routes = routeBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
@@ -136,7 +136,7 @@ describe('Route Builder Tests', () => {
         }),
       );
 
-      const routes = routeBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
@@ -159,7 +159,7 @@ describe('Route Builder Tests', () => {
         }),
       );
 
-      const routes = routeBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/users/:id/stuff',
