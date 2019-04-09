@@ -16,7 +16,7 @@ jobs:
       - save_cache:
           key: dependencies-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
+            - ~/repo/node_modules
 
   lint:
     <<: *defaults
