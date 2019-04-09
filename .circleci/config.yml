@@ -11,40 +11,40 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
       - run: yarn
       - save_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
           paths:
-            - ~/repo/node_modules
+            - node_modules
 
   lint:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
       - run: yarn lint
   test:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
       - run: yarn test
   mutation-test:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
       - run: yarn mutation-test
   publish:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependencies-{{ checksum "yarn.lock" }}
+          key: dependencies-v2-{{ checksum "yarn.lock" }}
       - run:
           name: Compile for deployment
           command: yarn build
