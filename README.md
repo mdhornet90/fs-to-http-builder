@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/mdhornet90/fs-to-http-builder/tree/master.svg?style=svg)](https://circleci.com/gh/mdhornet90/fs-to-http-builder/tree/master) [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/mdhornet90/fs-to-http-builder/master)](https://stryker-mutator.github.io)
+[![CircleCI](https://circleci.com/gh/mdhornet90/fs-to-http-builder/tree/master.svg?style=svg)](https://circleci.com/gh/mdhornet90/fs-to-http-builder/tree/master) [![npm version](https://badge.fury.io/js/fs-to-http-builder.svg)](https://badge.fury.io/js/fs-to-http-builder) [![Mutation testing badge](https://badge.stryker-mutator.io/github.com/mdhornet90/fs-to-http-builder/master)](https://stryker-mutator.github.io)
 
 # fs-to-http-builder
 A utility that can generate Express routes from your project's filesystem
@@ -56,12 +56,12 @@ The tool will generate the following route information:
         handler: 'default()' // from post.js
     },
     {
-        route: '/baz',
+        route: '/baz/:id',
         method: 'put',
         handler: 'default()' // from put.js
     },
     {
-        route: '/baz',
+        route: '/baz/:id',
         method: 'delete',
         handler: 'default()' // from delete.js
     }
