@@ -50,7 +50,7 @@ jobs:
           command: yarn build
       - run:
           name: Authenticate to NPM
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
           name: Publish the package
           command: npm publish
