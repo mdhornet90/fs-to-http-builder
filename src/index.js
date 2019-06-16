@@ -115,7 +115,7 @@ function extractValidRoutes(root, pathsToPotentialRoutes, { httpMethods }) {
 function extractRoute(root, pathToRoute) {
   const sanitizedPath = path
     .relative(root, pathToRoute)
-    .split('/')
+    .split(path.sep)
     .map(elem => (elem.startsWith('_') ? `:${elem.slice(1)}` : elem))
     .join('/');
   const { name, dir } = path.parse(sanitizedPath);
