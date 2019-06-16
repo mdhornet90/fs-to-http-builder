@@ -119,7 +119,7 @@ function extractRoute(root, pathToRoute) {
     .map(elem => (elem.startsWith('_') ? `:${elem.slice(1)}` : elem))
     .join('/');
   const { name, dir } = path.parse(sanitizedPath);
-  return { name, route: dir };
+  return { name, route: dir.replace(path.sep, '/') };
 }
 
 function buildEndpointRoute(route, name) {
