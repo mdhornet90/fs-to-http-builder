@@ -164,6 +164,39 @@ describe('Route Builder Tests', () => {
         handler: expect.any(Function),
       });
     });
+
+    test('The builder accepts custom route matchers to extend functionality', async () => {
+      await fsify(
+        translateDirectoryStructure({
+          'someFolder/api/endpoints/users/_id': {
+            'whatever.js': 'module.exports = { default: () => {} }',
+          },
+        }),
+      );
+
+      const handler = () => true;
+      const routes = fsToHttpBuilder(TESTING_DIRECTORY, {
+        customRouteMatchers: [
+          {
+            testFn() {
+              return true;
+            },
+            extractionFn() {
+              return {
+                method: 'imadeitup',
+                route: 'foo',
+                handler,
+              };
+            },
+          },
+        ],
+      });
+      expect(routes).toContainEqual({
+        method: 'imadeitup',
+        route: 'foo',
+        handler,
+      });
+    });
   });
 });
 

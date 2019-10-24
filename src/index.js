@@ -47,6 +47,7 @@ export default (
     httpMethods = ['post', 'get', 'put', 'patch', 'delete'],
     fileExclusionPatterns = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
     fileInclusionPattern = '**/endpoints/**/*[jt]s?(x)',
+    customRouteMatchers = [],
   } = {},
 ) => {
   const endpointPaths = getAllFilesFromRoot(rootPath).filter(aPath => {
@@ -59,7 +60,12 @@ export default (
   return Object.keys(endpointFileGroups).reduce(
     (acc, folder) => [
       ...acc,
-      ...extractValidRoutes(folder, endpointFileGroups[folder], DEFAULT_VALID_ROUTE_MATCHERS, { httpMethods }),
+      ...extractValidRoutes(
+        folder,
+        endpointFileGroups[folder],
+        [...customRouteMatchers, ...DEFAULT_VALID_ROUTE_MATCHERS],
+        { httpMethods },
+      ),
     ],
     [],
   );
