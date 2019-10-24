@@ -15,7 +15,10 @@ By default, the tool will crawl through your project's filesystem and search for
 
 This information can then be fed into Express directly.
 
-## For Example,
+## Custom matchers
+In addition to the built-in route matchers that come bundled by default with the tool, you can add custom matchers to handle more complex cases. If you feel the matcher you create is useful, please open a PR to petition for its inclusion as a default!
+
+## An Example
 If you have a folder structure like the following:
 ```
 {
@@ -68,5 +71,5 @@ The tool will generate the following route information:
 ]
 ```
 
-## Love it? Hate it? I want to know! (Maybe not the "hate it" part)
+## Love it? Hate it? I want to know!
 This project was inspired by code in a work project and extended to work with a side project of mine so I fully expect that I made assumptions other people would not - I'll attempt to add some of the first issues myself to track what are likely going to be points of pain for new users, but if the tool isn't working as you'd expect feel free to open up an issue on the project's [Issues page](https://github.com/mdhornet90/fs-to-http-builder/issues). 

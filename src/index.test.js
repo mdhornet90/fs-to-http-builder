@@ -10,10 +10,7 @@ expect.extend({
   toMatchFunction(receivedFn, expectedFnContents) {
     const pass = receivedFn.toString() === expectedFnContents;
     return {
-      message: () =>
-        `expected ${receivedFn.toString()} ${
-          pass ? 'not ' : ''
-        }to match ${expectedFnContents}`,
+      message: () => `expected ${receivedFn.toString()} ${pass ? 'not ' : ''}to match ${expectedFnContents}`,
       pass,
     };
   },
@@ -39,9 +36,7 @@ describe('Route Builder Tests', () => {
     });
 
     test('The builder will not generate routes from directories that do not contain an "endpoints" folder', async () => {
-      await fsify(
-        translateDirectoryStructure({ 'someFolder/thisFile': 'isUseless' }),
-      );
+      await fsify(translateDirectoryStructure({ 'someFolder/thisFile': 'isUseless' }));
       expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
@@ -104,11 +99,9 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar': {
-            'baz.js':
-              'module.exports = { get: () => {}, post: () => {}, blah: () => {} }',
+            'baz.js': 'module.exports = { get: () => {}, post: () => {}, blah: () => {} }',
             'thiswontmatch.js': 'module.exports = { default: () => {} }',
-            'anothernonmatch.js':
-              'module.exports = { blah: () => {}, foo: () => {} }',
+            'anothernonmatch.js': 'module.exports = { blah: () => {}, foo: () => {} }',
           },
         }),
       );
@@ -171,6 +164,39 @@ describe('Route Builder Tests', () => {
         handler: expect.any(Function),
       });
     });
+
+    test('The builder accepts custom route matchers to extend functionality', async () => {
+      await fsify(
+        translateDirectoryStructure({
+          'someFolder/api/endpoints/users/_id': {
+            'whatever.js': 'module.exports = { default: () => {} }',
+          },
+        }),
+      );
+
+      const handler = () => true;
+      const routes = fsToHttpBuilder(TESTING_DIRECTORY, {
+        customRouteMatchers: [
+          {
+            testFn() {
+              return true;
+            },
+            extractionFn() {
+              return {
+                method: 'imadeitup',
+                route: 'foo',
+                handler,
+              };
+            },
+          },
+        ],
+      });
+      expect(routes).toContainEqual({
+        method: 'imadeitup',
+        route: 'foo',
+        handler,
+      });
+    });
   });
 });
 
@@ -182,9 +208,7 @@ function translateDirectoryStructure(directory) {
     if (hasOneComponent && typeof contents === 'string') {
       return { type: Fsify.FILE, name: key, contents };
     }
-    const nextDirectory = hasOneComponent
-      ? contents
-      : { [rest.join('/')]: contents };
+    const nextDirectory = hasOneComponent ? contents : { [rest.join('/')]: contents };
     return {
       type: Fsify.DIRECTORY,
       name: first,
