@@ -1,8 +1,8 @@
 {
   "name": "fs-to-http-builder",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A utility that can generate express route information from your project's filesystem",
-  "main": "index.js",
+  "main": "src/index.mjs",
   "repository": "https://github.com/mdhornet90/fs-to-http-builder.git",
   "bugs": {
     "url": "https://github.com/mdhornet90/fs-to-http-builder/issues",
@@ -11,15 +11,29 @@
   "author": "Chris Murphy",
   "license": "MIT",
   "private": false,
-  "jest": { "coveragePathIgnorePatterns": ["unit-testing"] },
-  "scripts": {
-    "lint": "eslint src",
-    "build": "babel -d dist src --ignore '**/*.test.js'",
-    "test": "jest -i src",
-    "coverage": "jest -i --coverage src",
-    "mutation-test": "stryker run"
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "unit-testing"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.?(m)[jt]s?(x)",
+      "**/?(*.)+(spec|test).?(m)[tj]s?(x)"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ],
+    "transform": {
+      "\\.?(m)[jt]sx?$": "babel-jest"
+    }
   },
-  "files": ["/index.js", "/dist"],
+  "scripts": {
+    "lint": "eslint --ext mjs src",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest -i src",
+    "coverage": "NODE_OPTIONS=--experimental-vm-modules jest -i --coverage src",
+    "mutation-test": "NODE_OPTIONS=--experimental-vm-modules stryker run"
+  },
+  "files": ["src/index.mjs"],
   "dependencies": {
     "debug": "^4.1.1",
     "micromatch": "^4.0.2"
@@ -28,20 +42,25 @@
     "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
     "@babel/node": "^7.6.1",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.6.0",
-    "@stryker-mutator/core": "^2.1.0",
-    "@stryker-mutator/html-reporter": "^2.1.0",
-    "@stryker-mutator/javascript-mutator": "^2.1.0",
-    "@stryker-mutator/jest-runner": "^2.1.0",
-    "eslint": "^6.4.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.3.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-prettier": "^3.1.0",
+    "@stryker-mutator/core": "^4.3.1",
+    "@stryker-mutator/jest-runner": "^4.3.1",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.0",
     "fsify": "^3.0.0",
-    "jest": "^24.9.0",
+    "jest": "^26.6.3",
     "prettier": "^1.18.2",
     "stryker-babel-transpiler": "^0.10.1"
   },
-  "keywords": ["fs", "http", "express"]
+  "keywords": [
+    "fs",
+    "http",
+    "express"
+  ]
 }
