@@ -1,6 +1,6 @@
 import Fsify from 'fsify';
 
-import fsToHttpBuilder from '.';
+import fsToHttpBuilder from './index';
 
 const TESTING_DIRECTORY = `${process.cwd()}/unit-testing`;
 const harnessFsify = Fsify({ persistent: false, force: true });
@@ -32,38 +32,38 @@ describe('Route Builder Tests', () => {
   describe('Endpoint Discovery Tests', () => {
     test('The builder will not generate routes from empty directories', async () => {
       await fsify(translateDirectoryStructure({}));
-      expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder will not generate routes from directories that do not contain an "endpoints" folder', async () => {
       await fsify(translateDirectoryStructure({ 'someFolder/thisFile': 'isUseless' }));
-      expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder will not generate routes from an empty "endpoints" directory', async () => {
       await fsify(translateDirectoryStructure({ 'someFolder/endpoints': {} }));
-      expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder by default will skip test folders', async () => {
       await fsify(
         translateDirectoryStructure({
-          'someFolder/__tests__/this/endpoints/folder/will/be/skipped.js':
-            'module.exports = { get: () => {}, post: () => {} }',
+          'someFolder/__tests__/this/endpoints/folder/will/be/skipped.mjs':
+            'export const get = () => {}; export const post = () => {}',
         }),
       );
-      expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
 
     test('The builder by default will skip test files', async () => {
       await fsify(
         translateDirectoryStructure({
           someFolder: {
-            api: { endpoints: { 'something.test.js': 'file here' } },
+            api: { endpoints: { 'something.test.mjs': 'file here' } },
           },
         }),
       );
-      expect(fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
+      expect(await fsToHttpBuilder(TESTING_DIRECTORY)).toEqual([]);
     });
   });
   describe('Route Extraction Tests', () => {
@@ -72,16 +72,16 @@ describe('Route Builder Tests', () => {
         await fsify(
           translateDirectoryStructure({
             'someFolder/api/endpoints': {
-              'users.js': 'module.exports = { get: () => {} }',
+              'users.mjs': 'export const get = () => {}',
               'foo/bar': {
-                [`${method}.js`]: 'module.exports = { default: () => {} }',
-                'thiswontmatch.js': 'module.exports = { default: () => {} }',
+                [`${method}.mjs`]: 'export default function() {}',
+                'thiswontmatch.mjs': 'export default function() {}',
               },
             },
           }),
         );
 
-        const routes = fsToHttpBuilder(TESTING_DIRECTORY);
+        const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
         expect(routes).toContainEqual({
           method,
           route: '/foo/bar',
@@ -99,14 +99,14 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar': {
-            'baz.js': 'module.exports = { get: () => {}, post: () => {}, blah: () => {} }',
-            'thiswontmatch.js': 'module.exports = { default: () => {} }',
-            'anothernonmatch.js': 'module.exports = { blah: () => {}, foo: () => {} }',
+            'baz.mjs': 'export const get = () => {}; export const post = () => {}; export const blah = () => {}',
+            'thiswontmatch.mjs': 'export default function() {}',
+            'anothernonmatch.mjs': 'export const blah = () => {}; export const foo = () => {}',
           },
         }),
       );
 
-      const routes = fsToHttpBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
@@ -123,13 +123,13 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/foo/bar/baz': {
-            'index.js': 'module.exports = { get: () => {}, post: () => {} }',
-            'thiswontmatch.js': 'module.exports = { default: () => {} }',
+            'index.mjs': 'export const get =  () => {}; export const post = () => {}',
+            'thiswontmatch.mjs': 'export default function() {}',
           },
         }),
       );
 
-      const routes = fsToHttpBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/foo/bar/baz',
@@ -146,13 +146,13 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/users/_id/stuff': {
-            'index.js': 'module.exports = { get: () => {}, post: () => {} }',
-            'thiswontmatch.js': 'module.exports = { default: () => {} }',
+            'index.mjs': 'export const get =  () => {}; export const post = () => {}',
+            'thiswontmatch.mjs': 'export default function() {}',
           },
         }),
       );
 
-      const routes = fsToHttpBuilder(TESTING_DIRECTORY);
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY);
       expect(routes).toContainEqual({
         method: 'get',
         route: '/users/:id/stuff',
@@ -169,13 +169,13 @@ describe('Route Builder Tests', () => {
       await fsify(
         translateDirectoryStructure({
           'someFolder/api/endpoints/users/_id': {
-            'whatever.js': 'module.exports = { default: () => {} }',
+            'whatever.mjs': 'export default function() {}',
           },
         }),
       );
 
       const handler = () => true;
-      const routes = fsToHttpBuilder(TESTING_DIRECTORY, {
+      const routes = await fsToHttpBuilder(TESTING_DIRECTORY, {
         customRouteMatchers: [
           {
             testFn() {

@@ -41,12 +41,12 @@ const DEFAULT_VALID_ROUTE_MATCHERS = [
   },
 ];
 
-export default (
+export default async (
   rootPath,
   {
     httpMethods = ['post', 'get', 'put', 'patch', 'delete'],
-    fileExclusionPatterns = ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
-    fileInclusionPattern = '**/endpoints/**/*[jt]s?(x)',
+    fileExclusionPatterns = ['**/__tests__/**/*.?(m)[jt]s?(x)', '**/?(*.)+(spec|test).?(m)[jt]s?(x)'],
+    fileInclusionPattern = '**/endpoints/**/*?(m)[jt]s?(x)',
     customRouteMatchers = [],
   } = {},
 ) => {
@@ -57,18 +57,16 @@ export default (
     return result;
   });
   const endpointFileGroups = groupFilesByEndpointDirectories(endpointPaths);
-  return Object.keys(endpointFileGroups).reduce(
-    (acc, folder) => [
-      ...acc,
-      ...extractValidRoutes(
-        folder,
-        endpointFileGroups[folder],
-        [...customRouteMatchers, ...DEFAULT_VALID_ROUTE_MATCHERS],
-        { httpMethods },
-      ),
-    ],
-    [],
-  );
+  return Object.keys(endpointFileGroups).reduce(async (accumulator, folder) => {
+    const acc = await accumulator;
+    const extractedValidRoutes = await extractValidRoutes(
+      folder,
+      endpointFileGroups[folder],
+      [...customRouteMatchers, ...DEFAULT_VALID_ROUTE_MATCHERS],
+      { httpMethods },
+    );
+    return Promise.resolve([...acc, ...extractedValidRoutes]);
+  }, Promise.resolve([]));
 };
 
 function getAllFilesFromRoot(root) {
@@ -107,9 +105,9 @@ function groupFilesByEndpointDirectories(paths) {
 }
 
 function extractValidRoutes(root, pathsToPotentialRoutes, routerMatcherSuite, { httpMethods }) {
-  return pathsToPotentialRoutes.reduce((acc, pathToRoute) => {
-    // eslint-disable-next-line global-require, import/no-dynamic-require
-    const loadedModule = require(pathToRoute);
+  return pathsToPotentialRoutes.reduce(async (accumulator, pathToRoute) => {
+    const acc = await accumulator;
+    const loadedModule = await import(pathToRoute);
     const routeMetadata = extractRoute(root, pathToRoute);
     const match = routerMatcherSuite.find(({ testFn }) =>
       testFn({ loadedModule, routeMetadata, httpMethods, debugLogger: debug }),
@@ -123,8 +121,8 @@ function extractValidRoutes(root, pathsToPotentialRoutes, routerMatcherSuite, { 
       });
       acc.push(...(Array.isArray(extractedRouteHandler) ? extractedRouteHandler : [extractedRouteHandler]));
     }
-    return acc;
-  }, []);
+    return Promise.resolve(acc);
+  }, Promise.resolve([]));
 }
 
 function extractRoute(root, pathToRoute) {
