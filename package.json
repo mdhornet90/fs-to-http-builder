@@ -31,7 +31,8 @@
     "lint": "eslint --ext mjs src",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest -i src",
     "coverage": "NODE_OPTIONS=--experimental-vm-modules jest -i --coverage src",
-    "mutation-test": "NODE_OPTIONS=--experimental-vm-modules stryker run"
+    "mutation-test": "NODE_OPTIONS=--experimental-vm-modules stryker run",
+    "build": "babel -d dist src --ignore '**/*.test.js'"
   },
   "files": ["src/index.mjs"],
   "dependencies": {
